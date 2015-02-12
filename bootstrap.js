@@ -14,40 +14,20 @@
 
 var remup = (function() {
 
+	/* check if current release is the same as deployed one */
+	function check_release(current,manifestURI){
+		//ajax call to check if library as to be updated
 
-	function set_release(release){
-		this.release=release;
 	}
 
-	return { set_release: set_release }
 
-})();
-
-
-window.remup  = {
-
-	set_release: function(release){
-		this.release = release;
-	},
-
-
-	/*
-	 * check if current release is the same as deployed one
-	 */
-	check_release:function () {
-
-	};
-
-
-	app_bootstrap.update_release = function () {
-
-	};
-
-
-	app_bootstrap.load = function (scriptURI,callback) {
+	function load(callback){
 		var main = document.createElement('script');
 		main.setAttribute('type','text/javascript');
 		main.setAttribute('src', scriptURI);
 		main.onload = function(){ console.log("LOADING OK => " + scriptURI); callback();}
-	};
-};
+	}
+
+	return { check_release: check_release }
+
+})();
