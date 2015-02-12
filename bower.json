@@ -1,0 +1,26 @@
+{
+  "name": "remup",
+  "version": "0.1",
+  "homepage": "https://github.com/lesion/remup",
+  "authors": [
+    "lesion <lesion@autistici.org>"
+  ],
+  "description": "An HTML5 Hybrid Cordova/Phonegap App remote updater",
+  "main": "remup.js",
+  "keywords": [
+    "html5",
+    "hybrid",
+    "cordova",
+    "phonegap",
+    "remote",
+    "update"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

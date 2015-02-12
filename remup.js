@@ -17,9 +17,19 @@ var remup = (function() {
 	/* check if current release is the same as deployed one */
 	function check_release(current,manifestURI){
 		//ajax call to check if library as to be updated
+		var xhr=new XMLHttpRequest();
+		xhr.open("GET",manifestURI,true);
+		xhr.onreadystatechange = function(){
+			if(xhr.readyState!==4)
+				console.log("Dentro onready!");
 
+		}
+		xhr.send();
 	}
 
+	function update(){
+
+	}
 
 	function load(callback){
 		var main = document.createElement('script');
@@ -28,6 +38,10 @@ var remup = (function() {
 		main.onload = function(){ console.log("LOADING OK => " + scriptURI); callback();}
 	}
 
-	return { check_release: check_release }
+	return {
+		check_release: check_release,
+		update: update,
+		load: load
+		   }
 
 })();
