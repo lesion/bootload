@@ -6,7 +6,7 @@
       "projectTypeName": "com.intel.xdk.projecttype.jsapp",
       "src": "",
       "projectGuid": "0600f72f-0139-4cdb-80d4-44d0bf555765",
-      "lastModifiedDate": 1423842714507,
+      "lastModifiedDate": 1423850584480,
       "creationDate": 1423841047285
     },
     "sourceDirectory": "",
@@ -100,13 +100,6 @@
       {
         "id": "org.apache.cordova.file-transfer",
         "version": "0.4.3",
-        "selectedState": "Included",
-        "data": {},
-        "paramvals": {}
-      },
-      {
-        "id": "org.apache.cordova.file",
-        "version": "1.3.1",
         "selectedState": "Included",
         "data": {},
         "paramvals": {}

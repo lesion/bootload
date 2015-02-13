@@ -11,7 +11,7 @@
 
 <body>
 
-	<div id="log">
+	<div id="log" onclick="remup.check_release(remup.update);">
 		- NOTHING BUT BODY
 		<br>
 	</div>
@@ -19,7 +19,13 @@
 	<script src="http://10.42.0.1:8080/target/target-script-min.js"></script>
 	<script src="http://10.42.0.1:35729/livereload.js?snipver=1"></script>
 
-	<script src="http://10.42.0.1:8000/remup.js"></script>
+	<script src="http://10.42.0.1:8000/remup.js" id='remup'>
+		{
+			"main": "main.js",
+			"release": "first",
+			"manifestURI": "http://10.42.0.1:8000/remup.json"
+		}
+	</script>
 </body>
 
 </html>
