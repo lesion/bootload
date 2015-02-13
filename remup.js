@@ -16,80 +16,80 @@
 
 var remup = (function () {
 
-	var config = {};
+  var config = {};
 
-	/* load remup configuration */
-	function init() {
-		// check if this is the first time running
-		config.app_release = localStorage.getItem('remup.app_release') || 'remup.init';
-		alert(cordova.file);
-		alert(cordova.file.dataDirectory);
-		//if (config.app_release === 'remup.init')
-
-
-
-			console.log("Inside init");
-		load('remup_config.js', conf_loaded, conf_error);
-	}
-
-	function conf_loaded() {
-		console.log("CONF LOADED");
-
-		// loading last saved release
-		var last_release = cordova.file.dataDirectory + config.main.split('/').reverse()[0];
-		console.log("LOADING LAST_RELEASE: " + last_release);
-		load(last_release, function () {
-			console.log("SUCCESS");
-		}, function () {
-			var boundle_release = config.main;
-			console.log("FAILED! LOADING BOUNDLE: " + boundle_release);
-			load(boundle_release);
-		});
+  /* load remup configuration */
+  function init() {
+    // check if this is the first time running
+    config.app_release = localStorage.getItem('remup.app_release') || 'remup.init';
+    alert(cordova);
+    alert(cordova.file.dataDirectory);
+    //if (config.app_release === 'remup.init')
 
 
 
+      console.log("Inside init");
+    load('remup_config.js', conf_loaded, conf_error);
+  }
 
-	}
+  function conf_loaded() {
+    console.log("CONF LOADED");
 
-	function conf_error() {
-		console.log("remup_config.js file not found! Please read http://github.com/lesion/remup/ ");
-		throw new Error("remup_config.js file not found! Please read http://github.com/lesion/remup/ ");
-	}
-
-	/* check if current release is the same as deployed one */
-	function check_release(current, manifestURI) {
-		//ajax call to check if library as to be updated
-		var xhr = new XMLHttpRequest();
-		xhr.open("GET", manifestURI, true);
-		xhr.onreadystatechange = function () {
-			if (xhr.readyState !== 4) return;
-
-		};
-		xhr.send();
-	}
-
-	function update() {
-
-	}
+    // loading last saved release
+    var last_release = cordova.file.dataDirectory + config.main.split('/').reverse()[0];
+    console.log("LOADING LAST_RELEASE: " + last_release);
+    load(last_release, function () {
+      console.log("SUCCESS");
+    }, function () {
+      var boundle_release = config.main;
+      console.log("FAILED! LOADING BOUNDLE: " + boundle_release);
+      load(boundle_release);
+    });
 
 
 
-	function load(scriptURI, success, error) {
-		var script = document.createElement('script');
-		script.setAttribute('type', 'text/javascript');
-		script.setAttribute('src', scriptURI);
-		script.onload = success;
-		script.onerror = error;
-		document.getElementsByTagName('head')[0].appendChild(script);
-	}
 
-	return {
-		init: init,
-		config: config,
-		check_release: check_release,
-		update: update,
-		load: load
-	};
+  }
+
+  function conf_error() {
+    console.log("remup_config.js file not found! Please read http://github.com/lesion/remup/ ");
+    throw new Error("remup_config.js file not found! Please read http://github.com/lesion/remup/ ");
+  }
+
+  /* check if current release is the same as deployed one */
+  function check_release(current, manifestURI) {
+    //ajax call to check if library as to be updated
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", manifestURI, true);
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState !== 4) return;
+
+    };
+    xhr.send();
+  }
+
+  function update() {
+
+  }
+
+
+
+  function load(scriptURI, success, error) {
+    var script = document.createElement('script');
+    script.setAttribute('type', 'text/javascript');
+    script.setAttribute('src', scriptURI);
+    script.onload = success;
+    script.onerror = error;
+    document.getElementsByTagName('head')[0].appendChild(script);
+  }
+
+  return {
+    init: init,
+    config: config,
+    check_release: check_release,
+    update: update,
+    load: load
+  };
 
 })();
 //remup.init();
