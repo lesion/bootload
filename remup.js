@@ -20,7 +20,15 @@ var remup = (function () {
 
 	/* load remup configuration */
 	function init() {
-		console.log("Inside init");
+		// check if this is the first time running
+		config.app_release = localStorage.getItem('remup.app_release') || 'remup.init';
+		alert(cordova.file);
+		alert(cordova.file.dataDirectory);
+		//if (config.app_release === 'remup.init')
+
+
+
+			console.log("Inside init");
 		load('remup_config.js', conf_loaded, conf_error);
 	}
 
@@ -30,7 +38,9 @@ var remup = (function () {
 		// loading last saved release
 		var last_release = cordova.file.dataDirectory + config.main.split('/').reverse()[0];
 		console.log("LOADING LAST_RELEASE: " + last_release);
-		load(last_release, function(){console.log("SUCCESS");}, function () {
+		load(last_release, function () {
+			console.log("SUCCESS");
+		}, function () {
 			var boundle_release = config.main;
 			console.log("FAILED! LOADING BOUNDLE: " + boundle_release);
 			load(boundle_release);
@@ -82,5 +92,5 @@ var remup = (function () {
 	};
 
 })();
-remup.init();
+//remup.init();
 document.addEventListener("deviceready", remup.init, false);
