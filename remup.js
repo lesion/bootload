@@ -12,36 +12,67 @@
  */
 'use strict';
 
-var remup = (function() {
+var remup = (function () {
+
+	var config = {};
+
+	/* load remup configuration */
+	function init() {
+		console.log("Inside init");
+		load('remup_config.js',conf_loaded,conf_error);
+	}
+
+	function conf_loaded(){
+		console.log("CONF LOADED");
+
+		// loading last saved release
+
+
+
+
+	}
+
+	function conf_error(){
+		console.log("remup_config.js file not found! Please read http://github.com/lesion/remup/ ");
+		throw new Error("remup_config.js file not found! Please read http://github.com/lesion/remup/ ");
+	}
 
 	/* check if current release is the same as deployed one */
-	function check_release(current,manifestURI){
+	function check_release(current, manifestURI) {
 		//ajax call to check if library as to be updated
-		var xhr=new XMLHttpRequest();
-		xhr.open("GET",manifestURI,true);
-		xhr.onreadystatechange = function(){
-			if(xhr.readyState!==4)
-				console.log("Dentro onready!");
+		var xhr = new XMLHttpRequest();
+		xhr.open("GET", manifestURI, true);
+		xhr.onreadystatechange = function () {
+			if (xhr.readyState !== 4) return;
 
-		}
+		};
 		xhr.send();
 	}
 
-	function update(){
+	function update() {
 
 	}
 
-	function load(callback){
-		var main = document.createElement('script');
-		main.setAttribute('type','text/javascript');
-		main.setAttribute('src', scriptURI);
-		main.onload = function(){ console.log("LOADING OK => " + scriptURI); callback();}
+
+
+	function load(scriptURI,success,error) {
+		console.log("Dentro il load");
+		var script = document.createElement('script');
+		script.setAttribute('type', 'text/javascript');
+		script.setAttribute('src', scriptURI);
+		script.onload = success;
+		script.onerror = error;
+		document.getElementsByTagName('head')[0].appendChild(script);
 	}
 
 	return {
+		init: init,
+		config: config,
 		check_release: check_release,
 		update: update,
 		load: load
-		   }
+	};
 
 })();
+
+document.addEventListener("deviceready", remup.init, false);

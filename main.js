@@ -1,7 +1,6 @@
 
 (function(){
-	var release='test-first-release';
-	remup.load();
 
+	console.log("Dentro init!");
 
 })();
