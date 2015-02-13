@@ -10,6 +10,8 @@
  * 3- if there's a problem loading the latest, load the boundle one!
  *
  */
+
+/*globals cordova*/
 'use strict';
 
 var remup = (function () {
@@ -19,20 +21,27 @@ var remup = (function () {
 	/* load remup configuration */
 	function init() {
 		console.log("Inside init");
-		load('remup_config.js',conf_loaded,conf_error);
+		load('remup_config.js', conf_loaded, conf_error);
 	}
 
-	function conf_loaded(){
+	function conf_loaded() {
 		console.log("CONF LOADED");
 
 		// loading last saved release
+		var last_release = cordova.file.dataDirectory + config.main.split('/').reverse()[0];
+		console.log("LOADING LAST_RELEASE: " + last_release);
+		load(last_release, function(){console.log("SUCCESS");}, function () {
+			var boundle_release = config.main;
+			console.log("FAILED! LOADING BOUNDLE: " + boundle_release);
+			load(boundle_release);
+		});
 
 
 
 
 	}
 
-	function conf_error(){
+	function conf_error() {
 		console.log("remup_config.js file not found! Please read http://github.com/lesion/remup/ ");
 		throw new Error("remup_config.js file not found! Please read http://github.com/lesion/remup/ ");
 	}
@@ -55,8 +64,7 @@ var remup = (function () {
 
 
 
-	function load(scriptURI,success,error) {
-		console.log("Dentro il load");
+	function load(scriptURI, success, error) {
 		var script = document.createElement('script');
 		script.setAttribute('type', 'text/javascript');
 		script.setAttribute('src', scriptURI);
@@ -74,5 +82,5 @@ var remup = (function () {
 	};
 
 })();
-
+remup.init();
 document.addEventListener("deviceready", remup.init, false);
