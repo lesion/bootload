@@ -64,48 +64,35 @@ var remup = (function () {
     }
 
     /* async check for updates */
-    function check_update(current_release_name, success_callback, error_callback) {
+    function check_update(current_release_name, manifest_uri, success_callback, error_callback) {
         //ajax call to check if library as to be updated
         var xhr = new XMLHttpRequest();
-        console.log("Dentro check_release" + config);
-        console.log(config.manifestURI);
-        xhr.open("GET", config.manifestURI + '?' + Math.random(), true);
-        xhr.onerror = error_callback;
+        console.log("Dentro check_release");
+        xhr.open("GET", manifest_uri + '?' + Math.random(), true); // true mean async
         xhr.onreadystatechange = function () {
             if (xhr.readyState !== 4) return;
-            alert(xhr.responseText.trim());
-            var new_release_meta = {};
-            try {
-                new_release_meta = JSON.parse(xhr.responseText);
-            } catch (e) {
-                error_callback(e);
+            if (xhr.status !== 200) {
+                error_callback(xhr.status + ' ' + xhr.statusText);
                 return;
             }
+            var new_release_meta = {};
+            new_release_meta = JSON.parse(xhr.responseText);
             new_release_meta.is_new = (new_release_meta.release !== current_release_name);
             success_callback(new_release_meta);
         };
-        xhr.send();
+        xhr.send(null); // null is the body of the GET
     }
 
-    function update(release_meta) {
-        alert("UPDATE FROM: " + release_meta.uri);
+    function update(release_meta, success_update, error_update) {
         // call me when there is a new release
         var ft = new FileTransfer();
         ft.download(release_meta.uri, "cdvfile://localhost/persistent/" + config.main,
-            function (e) {
-
-                alert(e.toURL());
-                location.reload();
-            },
-            function (e) {
-                alert(e.http_status);
-                console.log(e);
-                alert(e.code);
-
-            });
-
+            success_update, error_update);
     }
 
+    function restart() {
+        location.reload();
+    }
 
     function load(scriptURI, success, error) {
         var script = document.createElement('script');
@@ -120,6 +107,7 @@ var remup = (function () {
     return {
         init: init,
         update: update,
+        restart: restart,
         check_update: check_update,
         load: load
     };

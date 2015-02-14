@@ -55,7 +55,7 @@ To be able to update the release of all users without pain, we should use remup.
 # Install / Configuration
 Get the library with bower:
 ```
-  ~/MyApp $ bower install remup --save
+ bower install remup --save
 ```
 or just the remup.js from [here](https://raw.githubusercontent.com/lesion/remup/master/remup.js).
 
@@ -69,11 +69,11 @@ Prepare a little json file to put online where remup will check the upcoming rel
 }
 ```
 
-As you see there are only two fields!
+As you can see there are only two fields!
 
 Then include the library in your html removing your original script as follow:
 
-##### index.hmtl
+##### index.html
 ```html
 <!doctype html>
 <html>
@@ -88,9 +88,9 @@ Then include the library in your html removing your original script as follow:
 <body>
 
     <button onclick="check_update();"></button>
+
 	<script src="cordova.js"></script>
     <script src="remup.js" data-main="myapp.js"></script>
-
 
 </body>
 </html>
@@ -102,8 +102,10 @@ and change your myapp.js:
 var app_version = '0.1';
 
 function check_update() {
-    // check if remote release match with current one and call a callback according
-    remup.check_update(app_version, 'http://localhost:8000/remup.json', success_update, error_update);
+    // check if remote release match with current one
+    // and call a callback according
+    remup.check_update(app_version, 'http://localhost:8000/remup.json',
+        success_update, error_update);
 }
 
 // release_data obj here is something:

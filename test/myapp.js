@@ -1,8 +1,10 @@
+'use strict';
 var app_version = '0.1';
 
 function check_update() {
+    console.log("dentro check upload");
     // check if remote release match with current one and call a callback according
-    remup.check_update(app_version, 'http://localhost:8000/remup.json', success_update, error_update);
+    remup.check_update(app_version, 'http://192.168.1.28:8000/remup.json', success_update, error_update);
 }
 
 // release_data obj here is something:
@@ -15,13 +17,13 @@ function success_update(release_data) {
             function (e) {
                 alert("Error download the new release" + e);
             });
-    }
-    else
+    } else
         alert("Current release is the latest one! => " + app_version);
 }
 
 function error_update(e) {
-    alert("Error checking for a new release" + e);
+    alert("Error checking for a new release: ");
+    console.log("ERROR: " + e);
 }
 
 
