@@ -8,7 +8,7 @@ you application in minified file and be ready to deploy it in just seconds!
 # How it works
 Let's say we have this HelloWorld v0.1 PhoneGap/Cordova app:
 
-```html index.html
+```html
 <!doctype html>
 <html>
 <head>
@@ -28,7 +28,7 @@ Let's say we have this HelloWorld v0.1 PhoneGap/Cordova app:
 </html>
 ```
 
-```javascript myapp.js
+```javascript
 function main(){
     alert("HelloWorld v0.1");
 }
@@ -43,3 +43,5 @@ function main(){
     alert("HelloWorld v0.2");
     alert("Yes! this is the new release");
 }
+
+
