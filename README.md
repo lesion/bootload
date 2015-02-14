@@ -8,7 +8,7 @@ you application in minified file and be ready to deploy it in just seconds!
 # Use case
 Let's say we have this HelloWorld v0.1 PhoneGap/Cordova app:
 
-#### index.html
+##### index.html
 ```html
 <!doctype html>
 <html>
@@ -26,20 +26,22 @@ Let's say we have this HelloWorld v0.1 PhoneGap/Cordova app:
     <script src="myapp.js"></script>
 
 </body>
-</html>```
+</html>
+```
 
-#### myapp.js
+##### myapp.js
 ```javascript
 function main(){
     alert("HelloWorld v0.1");
 }
 
-document.addEventListener("deviceready", main, false);```
+document.addEventListener("deviceready", main, false);
+```
 
 We want now to deploy a new fantastic feature which will alert twice the user at startup,
 so out main function would be:
 
-#### myapp_0.2.js
+##### myapp_0.2.js
 ```javascript
 function main(){
     alert("HelloWorld v0.2");
@@ -59,7 +61,7 @@ or just the remup.js from [here](https://raw.githubusercontent.com/lesion/remup/
 
 Prepare a little json file to put online where remup will check the upcoming releases.
 
-### remup.json
+#### remup.json
 ```json
 {
 	"release": "v0.2",
@@ -70,7 +72,7 @@ As you see there are only two fields!
 
 Then include the library in your html removing your original script as follow:
 
-#### index.hmtl
+##### index.hmtl
 ```html
 <!doctype html>
 <html>
@@ -90,10 +92,11 @@ Then include the library in your html removing your original script as follow:
 
 
 </body>
-</html>```
+</html>
+```
 
 and change your myapp.js:
-#### myapp.js
+##### myapp.js
 ``` javascript
     var app_version = '0.1';
 
