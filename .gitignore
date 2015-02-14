@@ -5,3 +5,4 @@
 /node_modules/
 *.mobileprovision
 intelxdk*
+test/remup.xdk*

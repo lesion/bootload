@@ -39,7 +39,7 @@ document.addEventListener("deviceready", main, false);
 ```
 
 We want now to deploy a new fantastic feature which will alert twice the user at startup,
-so out main function would be:
+so our main function will be:
 
 ##### myapp_0.2.js
 ```javascript
@@ -49,7 +49,7 @@ function main(){
 }
 ```
 
-To be able to do this without pain, we should use remup.
+To be able to update the release of all users without pain, we should use remup.
 
 
 # Install / Configuration
@@ -123,10 +123,7 @@ and change your myapp.js:
 ```
 
 At first run or in case of error, Remup will load the myapp.js from the
-App bundle. After
-
-# How to upgrade my app!
-
+App bundle.
 
 
 
