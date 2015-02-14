@@ -6,9 +6,9 @@ Tired of recompiling every time to whole application? Use your tool to concat/co
 you application in minified file and be ready to deploy it in just seconds!
 
 # How it works
-Let's say we have this PhoneGap/Cordova app:
+Let's say we have this HelloWorld v0.1 PhoneGap/Cordova app:
 
-```html
+```html index.html
 <!doctype html>
 <html>
 <head>
@@ -20,8 +20,26 @@ Let's say we have this PhoneGap/Cordova app:
 </head>
 
 <body>
+
 	<script src="cordova.js"></script>
+    <script src="myapp.js"></script>
 
 </body>
 </html>
 ```
+
+```javascript myapp.js
+function main(){
+    alert("HelloWorld v0.1");
+}
+document.addEventListener("deviceready", main, false);
+```
+
+We want now to deploy a new fantastic feature which will alert twice the user at startup,
+so out main function would be:
+
+```javascript
+function main(){
+    alert("HelloWorld v0.2");
+    alert("Yes! this is the new release");
+}
