@@ -134,8 +134,11 @@ function main() {
 main();
 ```
 
-At first run or in case of error, Remup will load the myapp.js from the
+At first run or in case of error, remup will load the myapp.js from the
 App bundle.
+
+After a successfull update (pressing the button in the code above), remup will
+load the latest release of your app.
 
 
 
