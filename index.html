@@ -2,25 +2,26 @@
 <html>
 
 <head>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="description" content="">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>Remup Test</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Remup Test</title>
 </head>
 
 <body>
 
-	<br>
-	<button onclick="remup.check_release(remup.update);">
+    <br>
+    <button onclick="check_update();">
         Click to check release upgrade!
-	</button>
+    </button>
+    <script src="cordova.js"></script>
 <!--
-	<script src="cordova.js"></script>
-	<script src="http://10.42.0.1:8080/target/target-script-min.js"></script>
-	<script src="http://10.42.0.1:35729/livereload.js?snipver=1"></script>
+
+    <script src="http://10.42.0.1:8080/target/target-script-min.js"></script>
+    <script src="http://10.42.0.1:35729/livereload.js?snipver=1"></script>
 -->
 
-	<script src="http://192.168.1.28:8000/remup.js" id='remup' data-main='my_test_app.js' data-manifest='http://192.168.1.28:8000/remup.json'></script>
+    <script src="http://192.168.1.28:8000/remup.js"  data-main='my_test_app.js'></script>
 </body>
 </html>

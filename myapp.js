@@ -1,6 +1,6 @@
 'use strict';
 (function () {
 
-	alert("Dentro first init!");
+	alert("HelloWorld 0.1!");
 
 })();

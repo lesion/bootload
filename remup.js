@@ -11,19 +11,14 @@
 
 var remup = (function () {
 
-    window.onerror = function (e) {
-        alert(e);
-    };
-
     var config = {};
 
     /* load remup configuration */
     function init() {
-        // TODO, can do it searching for remup.js in src attr
+        // read remup configuration from dataset attribute
         var tmp_scripts = document.getElementsByTagName('script');
         for (var i = tmp_scripts.length - 1; i >= 0; i--) {
             if (tmp_scripts[i].src.indexOf("remup.js") > -1) {
-                console.log(tmp_scripts[i].dataset);
                 config.main = tmp_scripts[i].dataset.main;
                 config.manifestURI = tmp_scripts[i].dataset.manifest;
             }
@@ -33,8 +28,9 @@ var remup = (function () {
             alert("Config error, have you added data-main and data-manifest to remup.js script?");
             return;
         }
-        if (typeof cordova === 'undefined') {
-            alert("Remup depends on cordova and cordova file >= 1.2 plugin!");
+        //check if cordova and cordova.file is defined
+        if (typeof cordova === 'undefined' || typeof cordova.file === 'undefined' || typeof FileTransfer === 'undefined') {
+            alert("Remup depends on cordova, cordova File >= 1.2 and cordova FileTransfer plugin!");
             return;
         }
 
@@ -49,7 +45,7 @@ var remup = (function () {
     function try_to_load() {
 
         // loading last saved release
-        //		var last_release = cordova.file.dataDirectory + config.main.split('/').reverse()[0];
+        //	var last_release = cordova.file.dataDirectory + config.main.split('/').reverse()[0];
         var last_release = cordova.file.documentsDirectory + config.main.split('/').reverse()[0];
 
         console.log("LOADING LAST_RELEASE: " + last_release);
@@ -77,7 +73,7 @@ var remup = (function () {
             var new_release_meta = JSON.parse(xhr.responseText);
 
             if (new_release_meta.release !== current_release_name) {
-                cb(new_release_meta);
+                callback(new_release_meta);
             }
         };
         xhr.send();
