@@ -66,7 +66,8 @@ Prepare a little json file to put online where remup will check the upcoming rel
 {
 	"release": "v0.2",
 	"uri": "http://localhost:8000/myapp_0.2.js"
-}```
+}
+```
 
 As you see there are only two fields!
 
@@ -98,28 +99,37 @@ Then include the library in your html removing your original script as follow:
 and change your myapp.js:
 ##### myapp.js
 ``` javascript
-    var app_version = '0.1';
+var app_version = '0.1';
 
-    function check_update(){
-        // check if remote release match with current one and call a callback according
-        remup.check_update(app_version,'http://localhost:8000/remup.json',success_update,error_update);
-    }
+function check_update() {
+    // check if remote release match with current one and call a callback according
+    remup.check_update(app_version, 'http://localhost:8000/remup.json', success_update, error_update);
+}
 
-    // release_data obj here is something:
-    // { "release": "remote_release_name", "uri': "http://newjsurl", is_new: true }
-    function success_update(release_data)
-    {
-        // could ask user if want to update...
-        if(release_data.is_new)
-            // update the app, at next reload the new myapp.0.2.js will be loaded !
-            remup.update(release_data,remup.restart,function(e){alert("Error download the new release" + e );} });
-        else
-            alert("Current release is the latest one! => " + app_version);
-    }
+// release_data obj here is something:
+// { "release": "remote_release_name", "uri': "http://newjsurl", is_new: true }
+function success_update(release_data) {
+    // could ask user if want to update...
+    if (release_data.is_new) {
+        // update the app, at next reload the new myapp.0.2.js will be loaded !
+        remup.update(release_data, remup.restart,
+            function (e) {
+                alert("Error download the new release" + e);
+            });
+    } else
+        alert("Current release is the latest one! => " + app_version);
+}
 
-    function error_update(e){
-        alert("Error checking for a new release" + e);
-    }
+function error_update(e) {
+    alert("Error checking for a new release" + e);
+}
+
+
+function main() {
+    alert("HelloWorld 0.1");
+}
+
+main();
 ```
 
 At first run or in case of error, Remup will load the myapp.js from the

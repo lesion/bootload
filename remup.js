@@ -20,16 +20,20 @@ var remup = (function () {
         for (var i = tmp_scripts.length - 1; i >= 0; i--) {
             if (tmp_scripts[i].src.indexOf("remup.js") > -1) {
                 config.main = tmp_scripts[i].dataset.main;
-                config.manifestURI = tmp_scripts[i].dataset.manifest;
+                config.continue = tmp_scripts[i].dataset.continue;
             }
         }
         // check if configuration is specified
-        if (!config.main || !config.manifestURI) {
-            alert("Config error, have you added data-main and data-manifest to remup.js script?");
+        if (!config.main) {
+            alert("Config error, have you added data-main to remup.js script?");
             return;
         }
         //check if cordova and cordova.file is defined
         if (typeof cordova === 'undefined' || typeof cordova.file === 'undefined' || typeof FileTransfer === 'undefined') {
+            if (config.continue) {
+                load(config.main);
+                return;
+            }
             alert("Remup depends on cordova, cordova File >= 1.2 and cordova FileTransfer plugin!");
             return;
         }
@@ -59,22 +63,26 @@ var remup = (function () {
 
     }
 
-    /* async check if current release is the same as deployed one */
-    function check_release(current_release_name, callback) {
+    /* async check for updates */
+    function check_update(current_release_name, success_callback, error_callback) {
         //ajax call to check if library as to be updated
         var xhr = new XMLHttpRequest();
         console.log("Dentro check_release" + config);
         console.log(config.manifestURI);
         xhr.open("GET", config.manifestURI + '?' + Math.random(), true);
+        xhr.onerror = error_callback;
         xhr.onreadystatechange = function () {
             if (xhr.readyState !== 4) return;
             alert(xhr.responseText.trim());
-
-            var new_release_meta = JSON.parse(xhr.responseText);
-
-            if (new_release_meta.release !== current_release_name) {
-                callback(new_release_meta);
+            var new_release_meta = {};
+            try {
+                new_release_meta = JSON.parse(xhr.responseText);
+            } catch (e) {
+                error_callback(e);
+                return;
             }
+            new_release_meta.is_new = (new_release_meta.release !== current_release_name);
+            success_callback(new_release_meta);
         };
         xhr.send();
     }
@@ -112,7 +120,7 @@ var remup = (function () {
     return {
         init: init,
         update: update,
-        check_release: check_release,
+        check_update: check_update,
         load: load
     };
 
