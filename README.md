@@ -1,3 +1,7 @@
+# UPDATE!
+I've found a complete project that solves the same problem:
+[cordova-app-loader](https://github.com/markmarijnissen/cordova-app-loader)
+
 # Remup
 This little library will solve a small but annoying problem:
 updating an hybrid html5 application without going throught Stores
