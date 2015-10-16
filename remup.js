@@ -1,5 +1,5 @@
 /*
- * RemUp 0.1
+ * RemUp 0.2.1
  * An HTML5 Hybrid Cordova/Phonegap App remote updater
  * http://github.com/lesion/remup
  * this library depends on cordova plugins File and FileTransfer
@@ -114,5 +114,8 @@ var remup = (function () {
 
 })();
 
-remup.init();
+//remup.init();
 document.addEventListener("deviceready", remup.init, false);
+
+module.exports = remup;
+

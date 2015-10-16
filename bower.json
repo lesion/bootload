@@ -1,6 +1,6 @@
 {
   "name": "remup",
-  "version": "0.0.2",
+  "version": "0.2.1",
   "homepage": "https://github.com/lesion/remup",
   "authors": [
     "lesion <lesion@autistici.org>"
@@ -13,7 +13,8 @@
     "cordova",
     "phonegap",
     "remote",
-    "update"
+    "update",
+    "hot push"
   ],
   "license": "MIT",
   "ignore": [
