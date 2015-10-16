@@ -9,7 +9,7 @@
 /*globals cordova, FileTransfer */
 'use strict';
 
-var remup = (function () {
+window.remup = (function () {
 
     var config = {};
 
@@ -115,7 +115,6 @@ var remup = (function () {
 })();
 
 //remup.init();
-document.addEventListener("deviceready", remup.init, false);
+//document.addEventListener("deviceready", remup.init, false);
 
-module.exports = remup;
 
