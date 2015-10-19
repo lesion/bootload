@@ -1,4 +1,4 @@
-# Remup
+# bootload
 This little library will solve a small but annoying problem:
 updating an hybrid html5 application without going throught Stores
 neither manually update in Ad-Hoc / Enterprise situation.
@@ -49,19 +49,19 @@ function main(){
 }
 ```
 
-To be able to update the release of all users without pain, we should use remup.
+To be able to update the release of all users without pain, we should use bootload.
 
 
 # Install / Configuration
 Get the library with bower:
 ```
- bower install remup --save
+ bower install bootload --save
 ```
-or just the remup.js from [here](https://raw.githubusercontent.com/lesion/remup/master/remup.js).
+or just the bootload.js from [here](https://raw.githubusercontent.com/lesion/bootload/master/bootload.js).
 
-Prepare a little json file to put online where remup will check the upcoming releases.
+Prepare a little json file to put online where bootload will check the upcoming releases.
 
-#### remup.json
+#### bootload.json
 ```json
 {
 	"release": "v0.2",
@@ -90,7 +90,7 @@ Then include the library in your html removing your original script as follow:
     <button onclick="check_update();"></button>
 
 	<script src="cordova.js"></script>
-    <script src="remup.js" data-main="myapp.js"></script>
+    <script src="bootload.js" data-main="myapp.js"></script>
 
 </body>
 </html>
@@ -104,7 +104,7 @@ var app_version = '0.1';
 function check_update() {
     // check if remote release match with current one
     // and call a callback according
-    remup.check_update(app_version, 'http://localhost:8000/remup.json',
+    bootload.check_update(app_version, 'http://localhost:8000/bootload.json',
         success_update, error_update);
 }
 
@@ -114,7 +114,7 @@ function success_update(release_data) {
     // could ask user if want to update...
     if (release_data.is_new) {
         // update the app, at next reload the new myapp.0.2.js will be loaded !
-        remup.update(release_data, remup.restart,
+        bootload.update(release_data, bootload.restart,
             function (e) {
                 alert("Error download the new release" + e);
             });
@@ -134,10 +134,10 @@ function main() {
 main();
 ```
 
-At first run or in case of error, remup will load the myapp.js from the
+At first run or in case of error, bootload will load the myapp.js from the
 App bundle.
 
-After a successfull update (pressing the button in the code above), remup will
+After a successfull update (pressing the button in the code above), bootload will
 load the latest release of your app.
 
 

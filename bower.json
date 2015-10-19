@@ -1,7 +1,7 @@
 {
-  "name": "remup",
+  "name": "bootload",
   "version": "0.2.2",
-  "homepage": "https://github.com/lesion/remup",
+  "homepage": "https://github.com/lesion/bootload",
   "authors": [
     "lesion <lesion@autistici.org>"
   ],
@@ -14,7 +14,9 @@
     "phonegap",
     "remote",
     "update",
-    "hot push"
+    "hot push",
+    "debug",
+    "dev"
   ],
   "license": "MIT",
   "ignore": [

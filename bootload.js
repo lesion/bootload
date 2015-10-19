@@ -1,5 +1,5 @@
 /*
- * RemUp 0.2.3
+ * BootLoader 0.2.3
  * An HTML5 Hybrid Cordova/Phonegap App remote updater
  * http://github.com/lesion/remup
  * this library depends on cordova plugins File and FileTransfer
@@ -9,21 +9,21 @@
 /*globals cordova, FileTransfer */
 'use strict';
 
-window.remup = (function (config) {
+window.bootloader = (function (config) {
 
   var to_load = config.resources.length;
 
   // check if i'm on device
   // TOFIX: has to check for filetransfer dep
-  if(on_device()){
-    function ready(){
-      if(cordova_deps() || config.dev_mode)
-        load_resources();
-      else
-        alert("Error loading BootLoader! is cordova-plugin-file and cordova-plugin-file-transfer installer?");
-    }
-    document.addEventListener('deviceready', load_resources, false);
+  function ready(){
+    if(cordova_deps() || config.dev_mode)
+      load_resources();
+    else
+      alert("Error loading BootLoader! is cordova-plugin-file and cordova-plugin-file-transfer installer?");
   }
+
+  if(on_device())
+    document.addEventListener('deviceready', ready, false);
   // not in cordova, do not wait for deviceready event to load resources
   else if (config.dev_mode)
     load_resources();
