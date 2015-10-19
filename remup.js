@@ -1,5 +1,5 @@
 /*
- * RemUp 0.2.1
+ * RemUp 0.2.3
  * An HTML5 Hybrid Cordova/Phonegap App remote updater
  * http://github.com/lesion/remup
  * this library depends on cordova plugins File and FileTransfer
@@ -9,112 +9,151 @@
 /*globals cordova, FileTransfer */
 'use strict';
 
-window.remup = (function () {
+window.remup = (function (config) {
 
-    var config = {};
+  var to_load = config.resources.length;
 
-    /* load remup configuration */
-    function init() {
-        // read remup configuration from dataset attribute
-        var tmp_scripts = document.getElementsByTagName('script');
-        for (var i = tmp_scripts.length - 1; i >= 0; i--) {
-            if (tmp_scripts[i].src.indexOf("remup.js") > -1) {
-                config.main = tmp_scripts[i].dataset.main;
-                config.continue = tmp_scripts[i].dataset.continue;
-            }
-        }
-        // check if configuration is specified
-        if (!config.main) {
-            alert("Config error, have you added data-main to remup.js script?");
-            return;
-        }
-        //check if cordova and cordova.file is defined
-        if (typeof cordova === 'undefined' || typeof cordova.file === 'undefined' || typeof FileTransfer === 'undefined') {
-            if (config.continue) {
-                load(config.main);
-                return;
-            }
-            alert("Remup depends on cordova, cordova File >= 1.2 and cordova FileTransfer plugin!");
-            return;
-        }
+  // check if i'm on device
+  // TOFIX: has to check for filetransfer dep
+  if(on_device()){
+    function ready(){
+      if(cordova_deps() || config.dev_mode)
+        load_resources();
+      else
+        alert("Error loading BootLoader! is cordova-plugin-file and cordova-plugin-file-transfer installer?");
+    }
+    document.addEventListener('deviceready', load_resources, false);
+  }
+  // not in cordova, do not wait for deviceready event to load resources
+  else if (config.dev_mode)
+    load_resources();
 
-        try_to_load();
+
+
+  function log(msg){
+    if(config.debug)
+    {
+      msg = '[remup]' + (typeof msg === 'string') ? msg : JSON.stringify(msg);
+      console.log(msg);
+      request('POST','http://elementary.local:10000',msg);
+    }
+  }
+
+  window.onerror = log;
+  window.log = log;
+
+  function on_device(){
+    return ( document.URL.indexOf( 'http://' ) === -1 );
+  }
+
+  function cordova_deps(){
+    return (typeof cordova !== 'undefined' &&   typeof cordova.file !== 'undefined' &&
+        typeof FileTransfer !== 'undefined' );
+  }
+
+  function load_resources(){
+    config.resources.forEach(load_resource);
+  }
+
+  function load_resource(resource){
+
+    // load resource from config.dev_url in dev_mode
+    // load resource from cordova fs the other case
+    // in case of error, load the resource from bundle !!
+
+    
+    var base_path;
+
+    if(config.dev_mode)
+      base_path = config.dev_url;
+    else
+      base_path = cordova.file.documentsDirectory;
+
+    load(base_path + resource)
+      .then(success)
+      .catch(function(e){
+        log(e);
+        log("Failed to load " + base_path + resource );
+        load(resource)
+          .then(success)
+          .catch(function(){
+            log("ERROR! Failed on both base_url for resource " + resource);
+          });
+      });
+
+    function load(URI){
+      return new Promise(function(resolve,reject){
+        log("Trying to load " + URI);
+        var extension = URI.split('.').pop(),
+             isCss = (extension==='css'),
+             element;
+        element = document.createElement(isCss?'link':'script');
+        element.setAttribute(isCss?'href':'src',URI);
+        element.setAttribute(isCss?'rel':'type',isCss?'stylesheet':'text/javascript');
+        element.onload=resolve;
+        element.onerror=reject;
+        document.getElementsByTagName('head')[0].appendChild(element);
+      });
     }
 
 
-    /* try to load in sequence:
-     * 1. last release
-     * 2. boundle release
-     */
-    function try_to_load() {
-
-        // loading last saved release
-        //	var last_release = cordova.file.dataDirectory + config.main.split('/').reverse()[0];
-        var last_release = cordova.file.documentsDirectory + config.main.split('/').reverse()[0];
-
-        console.log("LOADING LAST_RELEASE: " + last_release);
-        load(last_release, function () {
-            console.log("SUCCESS LOADING DOWNLOADED RELEASE!");
-        }, function () {
-            var boundle_release = config.main;
-            console.log("FAILED! LOADING BOUNDLE: " + boundle_release);
-            load(boundle_release);
-        });
-
+    function success(){
+      log("Succesfully loaded " + base_path + resource );
+      if(!--to_load)
+        config.oncomplete();
     }
 
-    /* async check for updates */
-    function check_update(current_release_name, manifest_uri, success_callback, error_callback) {
-        //ajax call to check if library as to be updated
-        var xhr = new XMLHttpRequest();
-        console.log("Dentro check_release");
-        xhr.open("GET", manifest_uri + '?' + Math.random(), true); // true mean async
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState !== 4) return;
-            if (xhr.status !== 200) {
-                error_callback(xhr.status + ' ' + xhr.statusText);
-                return;
-            }
-            var new_release_meta = {};
-            new_release_meta = JSON.parse(xhr.responseText);
-            new_release_meta.is_new = (new_release_meta.release !== current_release_name);
-            success_callback(new_release_meta);
-        };
-        xhr.send(null); // null is the body of the GET
-    }
+  }
 
-    function update(release_meta, success_update, error_update) {
-        // call me when there is a new release
-        var ft = new FileTransfer();
-        ft.download(release_meta.uri, "cdvfile://localhost/persistent/" + config.main,
-            success_update, error_update);
-    }
+  function request(method, url,data) {
+    return new Promise(function (resolve, reject) {
+      var xhr = new XMLHttpRequest();
+      xhr.open(method, url,true);
+      xhr.onload = resolve;
+      xhr.onerror = reject;
+      xhr.send(data);
+    });
+  }
 
-    function restart() {
-        location.reload();
-    }
-
-    function load(scriptURI, success, error) {
-        var script = document.createElement('script');
-        script.setAttribute('type', 'text/javascript');
-        script.setAttribute('src', scriptURI);
-        console.log("TRYING TO LOAD: " + scriptURI);
-        script.onload = success;
-        script.onerror = error;
-        document.getElementsByTagName('head')[0].appendChild(script);
-    }
-
-    return {
-        init: init,
-        update: update,
-        restart: restart,
-        check_update: check_update,
-        load: load
+  /* async check for updates */
+  function check_update(current_release_name, manifest_uri, success_callback, error_callback) {
+    //ajax call to check if library as to be updated
+    var xhr = new XMLHttpRequest();
+    console.log("Dentro check_release");
+    xhr.open("GET", manifest_uri + '?' + Math.random(), true); // true mean async
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState !== 4) return;
+      if (xhr.status !== 200) {
+        error_callback(xhr.status + ' ' + xhr.statusText);
+        return;
+      }
+      var new_release_meta = {};
+      new_release_meta = JSON.parse(xhr.responseText);
+      new_release_meta.is_new = (new_release_meta.release !== current_release_name);
+      success_callback(new_release_meta);
     };
+    xhr.send(null); // null is the body of the GET
+  }
+
+  function update(release_meta, success_update, error_update) {
+    // call me when there is a new release
+    var ft = new FileTransfer();
+    ft.download(release_meta.uri, "cdvfile://localhost/persistent/" + config.main,
+        success_update, error_update);
+  }
+
+  function restart() {
+    location.reload();
+  }
+
+  return {
+    update: update,
+    restart: restart,
+    check_update: check_update,
+  };
 
 })();
 
 //remup.init();
 //document.addEventListener("deviceready", remup.init, false);
-
-
+//

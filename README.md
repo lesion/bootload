@@ -1,7 +1,3 @@
-# UPDATE!
-I've found a complete project that solves the same problem:
-[cordova-app-loader](https://github.com/markmarijnissen/cordova-app-loader)
-
 # Remup
 This little library will solve a small but annoying problem:
 updating an hybrid html5 application without going throught Stores
@@ -27,7 +23,7 @@ Let's say we have this HelloWorld v0.1 PhoneGap/Cordova app:
 <body>
 
 	<script src="cordova.js"></script>
-    <script src="myapp.js"></script>
+  <script src="myapp.js"></script>
 
 </body>
 </html>
