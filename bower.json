@@ -6,7 +6,7 @@
     "lesion <lesion@autistici.org>"
   ],
   "description": "An HTML5 Hybrid Cordova/Phonegap App remote updater",
-  "main": "remup.js",
+  "main": "bootload.js",
   "keywords": [
     "html5",
     "hybrid",
