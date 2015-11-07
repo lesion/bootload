@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>bootload test</title>
+</head>
+
+<body>
+  <script src="bootload.js" charset="utf-8"></script>
+  <script type="text/javascript">
+    bootload.boot({
+      release: '2.0.0',
+      resources: ['app.js'],
+      dev_mode: true,
+      dev_url: "http://elementary.local:8000/",
+      debug_url: "http://elementary.local:10000",
+      update_url: "http://elementary.local:8000/test.json",
+      oncomplete: function(){console.log("Loaded!!!");}
+    });
+  </script>
+</body>
+
+</html>

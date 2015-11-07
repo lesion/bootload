@@ -2,8 +2,10 @@
 This little library will solve a small but annoying problem:
 updating an hybrid html5 application without going throught Stores
 neither manually update in Ad-Hoc / Enterprise situation.
-Tired of recompiling every time to whole application? Use your tool to concat/compile
-you application in minified file and be ready to deploy it in just seconds!
+Tired of recompiling every time the whole application?
+Use your tool to concat/compile you application in minified file
+and be ready to deploy it in just seconds!
+
 
 # Use case
 Let's say we have this HelloWorld v0.1 PhoneGap/Cordova app:
@@ -139,6 +141,3 @@ App bundle.
 
 After a successfull update (pressing the button in the code above), bootload will
 load the latest release of your app.
-
-
-
