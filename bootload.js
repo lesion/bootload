@@ -14,7 +14,7 @@
 bootload.boot({
   release: '2.0.0',
   resources: ['css/vendor.css','css/app.css','js/vendor.js','js/templates.js','js/app.js'],
-  dev_mode: true,
+  dev_mode: false,
   debug_url: "http://dev-machine-hostname.local:10000",
   dev_url: "http://dev-machine-hostname.local:8000",
   update_url: "https://deploy-machine-hostname/",
@@ -24,22 +24,32 @@ bootload.boot({
 (function(root) {
 
   var self = {},
-    config,
-    release,
+    config, //store configuration
+    release, //store current release
     to_load,
     log;
 
-  // this is a generic logger
+  /**
+   * usefull generic logger factory (it POST remotely logs to config.debug_url)
+   * @param  {string} name logger name
+   * @return {function}      logger
+   * @example
+   * 		var log = logger('myModule');
+   * 		log('my log');
+   *    // this will produce "[myModule] my log" in console.log and remotely
+   */
   self.logger = function logger(name) {
     return function(msg) {
-      var message = "[\x1b[32m" + name + '\x1b[0m] ';
+      var message = '';
       if (config.dev_mode) {
-        message += (typeof msg === 'string') ? msg : JSON.stringify(msg);
-        console.log(message);
+        message = (typeof msg === 'string') ? msg : JSON.stringify(msg);
+        console.log("[" + name + "] " + message);
+        message = "[\x1b[32m" + name + '\x1b[0m] ' + message;
         request('POST', config.debug_url, message);
       }
     };
   };
+
 
   // generic request xhr method with promises
   function request(method, url, data) {
@@ -47,15 +57,16 @@ bootload.boot({
       var xhr = new XMLHttpRequest();
       xhr.open(method, url, true);
       xhr.onload = function() {
-        if (this.status === 200) {
-          resolve(this.responseText);
-        } else reject(this.responseText);
+        if (xhr.status === 200) {
+          resolve(xhr.response);
+        } else {
+          reject(Error(xhr.statusText));
+        }
       };
       xhr.onerror = reject;
       xhr.send(data);
     });
   }
-  log = self.logger('bootload');
 
   /**
    * boot method / this is the first method you have to call
@@ -67,11 +78,15 @@ bootload.boot({
     to_load = config.resources.length;
     release = localStorage.getItem('release') || config.release;
 
-    if (config.dev_mode) root.onerror = self.logger('GLOBAL');
-
+    if (config.dev_mode) {
+      root.onerror = self.logger('GLOBAL');
+    }
+    log = self.logger('bootload');
+    root.logger = self.logger;
+    window.onerror = alert;
     function ready() {
       // check if deps are satisfied
-      if (cordova_deps() || config.dev_mode)
+      if (cordova_deps())
         load_resources();
       else
         alert("Error loading BootLoad! is cordova-plugin-file and cordova-plugin-file-transfer installer?");
@@ -96,6 +111,7 @@ bootload.boot({
   }
 
   function load_resources() {
+    log("Start to load resources  \n\t" + config.resources.join(" \n\t"));
     config.resources.forEach(load_resource);
   }
 
@@ -110,97 +126,75 @@ bootload.boot({
       base_path = config.dev_url;
     else
       base_path = cordova.file.documentsDirectory;
-
+    log(base_path);
+    log(config.dev_mode);
     load(base_path + resource)
-      .then(success)
-      .catch(function(e) {
-        log(e);
-        log("Failed to load " + base_path + resource);
+      .then(success, function() {
+        log("Failed toload " + base_path + resource);
         load(resource)
-          .then(success)
-          .catch(function() {
+          .then(success, function() {
             log("ERROR! Failed on both base_url for resource " + resource);
           });
       });
 
     function load(URI) {
       return new Promise(function(resolve, reject) {
-        log("Trying to load " + URI);
         var extension = URI.split('.').pop(),
           isCss = (extension === 'css'),
           element;
         element = document.createElement(isCss ? 'link' : 'script');
-        element.setAttribute(isCss ? 'href' : 'src', URI);
-        element.setAttribute(isCss ? 'rel' : 'type', isCss ? 'stylesheet' : 'text/javascript');
+        element.async = true;
         element.onload = resolve;
         element.onerror = reject;
+        element.setAttribute(isCss ? 'href' : 'src', URI);
+        element.setAttribute(isCss ? 'rel' : 'type', isCss ? 'stylesheet' : 'text/javascript');
         document.getElementsByTagName('head')[0].appendChild(element);
       });
     }
 
 
     function success() {
-      log("Succesfully loaded " + base_path + resource);
+      // log("Succesfully loaded " + base_path + resource);
       if (--to_load) return;
-
-      config.oncomplete();
-
-      // ok app is running
-      self.check_update().then(function() {
-        // log(data.resources);
-        config.resources.forEach(function(resource) {
-          log(resource);
-          download(resource).then(log).catch(log);
-        });
-      }).catch(log);
+      log("LOAD COMPLETED !!! RUNNING APP! ");
+      try {
+        config.oncomplete();
+      } catch (e) {
+        log(e.stack);
+      }
     }
-
   }
 
+  self.update = function update() {
+    var download_promises = config.resources.map(download);
+    return Promise.all(download_promises).then(function(){
+      log("All DOWNLOADED!!!");
+      self.check_update().then(function(new_release_meta){
+        config.release = new_release_meta.release;
+        localStorage.setItem('release',config.release);
+      });
+    });
+  };
 
   /* async check for updates */
   self.check_update = function check_update() {
-    return new Promise(function(resolve, reject) {
-
-      request('GET', config.update_url)
-        .then(function(data) {
-
-          var new_release_meta = JSON.parse(data);
-          log(new_release_meta.release + ' ' + release);
-          if (new_release_meta.release !== release)
-            resolve(new_release_meta);
-          else {
-            reject('no update, same release');
-          }
-        })
-        .catch(reject);
-
-      //ajax call to check if library as to be updated
-      //   var xhr = new XMLHttpRequest();
-      //   xhr.open("GET", update_url + '?' + Math.random(), true); // true mean async
-      //   xhr.onreadystatechange = function() {
-      //     if (xhr.readyState !== 4) return;
-      //     if (xhr.status !== 200) {
-      //       reject(xhr.status + ' ' + xhr.statusText);
-      //       return;
-      //     }
-      //     var new_release_meta = {};
-      //     new_release_meta = JSON.parse(xhr.responseText);
-      //     log(new_release_meta.release + ' ' + release);
-      //     if (new_release_meta.release !== release)
-      //       resolve(new_release_meta);
-      //     else
-      //       reject('No update, same release');
-      //   };
-      //   xhr.send(null); // null is the body of the GET
-    });
+    return request('GET', config.update_url)
+      .then(function(data) {
+        var new_release_meta = JSON.parse(data);
+        log(new_release_meta.release + ' ' + release);
+        if (new_release_meta.release !== release)
+          return new_release_meta;
+        else {
+          throw new Error('no update, same release');
+        }
+      });
   };
 
   function download(resource) {
     return new Promise(function(resolve, reject) {
       var ft = new FileTransfer();
       log("Downloading " + config.dev_url + resource);
-      ft.download(config.dev_url + resource, "cdvfile://localhost/persistent/" + resource,
+      ft.download(config.dev_url + resource + '?' + Date.now(), "cdvfile://localhost/persistent/" + resource,
         resolve, reject);
     });
   }
